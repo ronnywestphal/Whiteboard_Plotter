@@ -199,7 +199,7 @@ int main(void)
 
     while(1){
 
-        pwm_up();  // Grund vinkel PWM
+        //pwm_up();  // Grund vinkel PWM
         /* Start ADC conversion */
         adc_software_trigger_enable(ADC0, ADC_INSERTED_CHANNEL);
 
@@ -210,8 +210,7 @@ int main(void)
         if(can_message.rx_sfid != CAN_NO_MESSAGE){
             CAN_receive_message_execute(can_message,P_coordinates, &pointerX,&pointerY);       
         } 
-
-        //lyft penna  
+        
     }
     
 }
@@ -720,9 +719,9 @@ void pwm_up(void){
   delay_1ms(20);
 }
 void pwm_down(){
-  int j=1500;
+  int j=1750;
   
-  for(int i=0;i<500;i++){
+  for(int i=0;i<100;i++){
     timer_channel_output_pulse_value_config(TIMER4,TIMER_CH_1,(int)j);
     delay_1ms(20);
     j+=5;
