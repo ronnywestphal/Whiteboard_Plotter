@@ -1,2 +1,10 @@
 # INTERFACE TKINTER
-Add
+# write()
+send-data as parameter
+returns Number of bytes written [int]
+Set timeout = 0 to run non-blocking mode and return immediately, returning zero up to requested number of bytes.
+
+# look into
+read(size=?)
+returns an instance of bytes when available, otherwise str. With no timout set it will block until number of bytes are read.
+
