@@ -1,9 +1,17 @@
 from tkinter import *
 from serial import *
 from PIL import Image,ImageTk
+#Update:
+#Allting typ dubbelt så stort.
+#Mainrutan alltid i center.
+#Ny funktion "toogle_state" sätter en ruta till 'normal' eller 'disabled'. Tillagd i flera widgets och i close_top2()
+#command = lambda : ( f1(), f2() ) kan använda flera funktioner.
+#Plotrutan i ny ruta över toppen av mainrutan samt att mainrutan blir 'disabled'.
+#Plotrutan använder samma crop av bilden som mainrutan.
+#Lagt till funktioner i klassen "ButtonMain" för att ändra aktiva och vanliga inställningar.
+
 
 ##### Settings for reusable widgets ########################
-
 class ButtonMain(Button):
     def __init__(self,master, txt='', dim=[]):
         Button.__init__(self, master=master)
