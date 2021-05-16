@@ -13,8 +13,8 @@ from PIL import Image,ImageTk
 
 ##### Settings for reusable widgets ########################
 class ButtonMain(Button):
-    def __init__(self,master, txt='', dim=[]):
-        Button.__init__(self, master=master)
+    def __init__(self,parent=None, txt='', dim=[]):
+        Button.__init__(self, parent)
         self['background'] = 'grey5'
         self['foreground'] = 'cyan3'
         self['activebackground'] = 'grey6'
@@ -357,7 +357,7 @@ def circle():
     global coordinates, input_top
     
     input_top = Toplevel()
-    input_top.geometry("800x170+{}+{}".format(root_left,root_top))
+    input_top.geometry("{}x{}+{}+{}".format(root_W,plot_H,root_left,root_top))
 
     myLabel = Label(input_top, image=bimg, bg='grey5')
     myLabel.place(x=0,y=0)  
@@ -397,7 +397,7 @@ def square():
     global coordinates, input_top
     
     input_top = Toplevel()
-    input_top.geometry("800x170+{}+{}".format(root_left,root_top))
+    input_top.geometry("{}x{}+{}+{}".format(root_W,plot_H,root_left,root_top))
 
     myLabel = Label(input_top, image=bimg, bg='grey5')
     myLabel.place(x=0,y=0)  
@@ -437,7 +437,7 @@ def travel():
     global coordinates, input_top
     
     input_top = Toplevel(root)
-    input_top.geometry("800x170+{}+{}".format(root_left,root_top))
+    input_top.geometry("{}x{}+{}+{}".format(root_W,plot_H,root_left,root_top))
 
     myLabel = Label(input_top, image=bimg, bg='grey5')
     myLabel.place(x=0,y=0)    
