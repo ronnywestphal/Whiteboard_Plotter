@@ -1,6 +1,14 @@
 from tkinter import *
 from serial import *
 
+#Lagt till fler fönster med Toplevel()
+#Huvudmenyn göms utan att stänga av programmet med .withdraw() sen .deiconify()
+#Några exempel figurer hårdkodade
+#Övriga menyer ligger i planet menu2 
+#Alla librarysidor ligger i planet library_top
+#Alla Entrysidor ligger i planet input_top
+#Varje gång en ny sida öppnas töms föregående sida med metoden .destroy(), främst för att frigöra utrymmet då flera gränssnitt delar på planet, men även för att undvika att flera fönster är öppna samtidigt.
+#command=lambda : funktion(parameter) används för att kunna skicka parametrar via tkinters funktioner.
 
 ##### WINDOW ###############################################
 root = Tk()
