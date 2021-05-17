@@ -133,6 +133,7 @@ def close_top(top, shape):
     else: 
         menu2.destroy()
         root.deiconify()
+        root.geometry("{}x{}+{}+{}".format(root_W, root_H, root_left, root_top))
         
     if (top != 'menu2'):        
         if (shape=='line'):
@@ -142,7 +143,8 @@ def close_top(top, shape):
         elif (shape=='square'):
             secondMenu(shape, 'Square Menu')
         else:                   # travel or mario = bring back root
-            root.deiconify()       
+            root.deiconify()
+            root.geometry("{}x{}+{}+{}".format(root_W, root_H, root_left, root_top))       
         
 # CLOSE SECOND MENU WINDOW # 
 def close_top2(shape, lib):        # (which shape, library/user input)
