@@ -9,6 +9,8 @@ from PIL import Image,ImageTk
 #Plotrutan i ny ruta över toppen av mainrutan samt att mainrutan blir 'disabled'.
 #Plotrutan använder samma crop av bilden som mainrutan.
 #Lagt till funktioner i klassen "ButtonMain" för att ändra aktiva och vanliga inställningar.
+#activebackground option fungerar ej i windows - lagt till funktioner och binds <Enter><Leave> i ButtonMain()
+#reiconify() återskapar rutan på fel plats - specificerat center-koordinater efter varje reiconify()
 
 
 ##### Settings for reusable widgets ########################
@@ -68,14 +70,16 @@ root.title("Whiteboard Plotter")
 root.option_add('*Font', '21')
 root.configure(bg="black")
 
-# Main Window dimensions and position center #
+# Main Window dimensions and position center # {width} x {height} + {left} + {top}
 root_W = 800 
 root_H = 560
-root_left = int(root.winfo_screenwidth()/2 - root_W/2)
+root_left = int(root.winfo_screenwidth()/2 - root_W/2)      # Get user screen dimension
 root_top = int(root.winfo_screenheight()/2 - root_H/2)
 root.geometry("{}x{}+{}+{}".format(root_W, root_H, root_left, root_top))
-# Plot Window height #
+# Plot-Window height #
 plot_H = 170
+
+############################################################
 
 ##### BACKGROUND IMAGES ####################################
 im = Image.open("linjer1.jpeg")
@@ -83,10 +87,7 @@ im2 = im.resize((800,600))
 bimg = ImageTk.PhotoImage(im2)
 myLabel = Label(root, image=bimg, bg="grey10")
 myLabel.place(x=0,y=0)
-# Wide Version #
-bimg_tmp = Image.open("linjer1.jpeg")
-bimg_tmp2 = bimg_tmp.resize((1150,285))
-bimg_re = ImageTk.PhotoImage(bimg_tmp2)
+
 # MARIO IMAGE #
 img1 = Image.open("Super-Mario.jpg")
 reimg = img1.resize((800,600))
@@ -104,14 +105,17 @@ serial_port = '/dev/ttyACM0'
 def clickSend(m_id):
     global coordinates 
     tempstring = coordinates[0].get() 
-    send_string = "D" + m_id + "B" + tempstring
+    byte_1, byte_2 = tempstring[:len(tempstring)//2], tempstring[len(tempstring)//2:]
+    send_string = "D" + m_id + "B" + byte_1 + ' ' + byte_2
     entry_index = 1
     tempstring = coordinates[entry_index].get()
     
     while (tempstring and entry_index != len(coordinates)):
-        send_string += " "
-        send_string += tempstring
+    
+        byte_1, byte_2 = tempstring[:len(tempstring)//2], tempstring[len(tempstring)//2:]
+        send_string += ' ' + byte_1 + ' ' + byte_2
         entry_index += 1
+        
         try:
             tempstring = coordinates[entry_index].get()
         except:
@@ -183,13 +187,10 @@ def toggle_state(state, root_win):
 #############################################################
 
 ##### SEND STRING FROM LIBRARY ##############################
-def libSend_line(send):
+def libSend(send):
     print(str.encode(send))
     #serial_send.write(str.encode(send))
-def libSend_circle(send):
-    print(str.encode(" "))
-def libSend_square(send):
-    print(str.encode(" "))
+
 #############################################################
 
 ##### LIBRARY MENUES ########################################
@@ -207,15 +208,15 @@ def libLines():
     back.place(x=0, y=0)
 
     button_X = ButtonMain(library_top, 'Zero->X', dim)
-    button_X.config(command=lambda : libSend_line("D601B0000 0000 01FF 0000\n"))
+    button_X.config(command=lambda : libSend("D601B00 00 00 00 01 FF 00 00\n"))
     button_Y = ButtonMain(library_top, 'Zero^Y', dim)
-    button_Y.config(command=lambda : libSend_line("D601B0000 0000 0000 01FF\n"))
+    button_Y.config(command=lambda : libSend("D601B00 00 00 00 00 00 01 FF\n"))
     button_Diag = ButtonMain(library_top, 'Zero_Diag', dim)
-    button_Diag.config(command=lambda : libSend_line("D601B0000 0000 01FF 01FF\n"))
+    button_Diag.config(command=lambda : libSend("D601B00 00 00 00 01 FF 01 FF\n"))
 
-    button_X.place(x=309,y=90)
-    button_Y.place(x=309,y=180)
-    button_Diag.place(x=309,y=270)
+    button_X.place(x=297,y=80)
+    button_Y.place(x=297,y=170)
+    button_Diag.place(x=297,y=260)
     library_top.protocol("WM_DELETE_WINDOW", lambda : root.quit())
 
 def libCircles():
@@ -234,25 +235,25 @@ def libCircles():
 
     # radius = 1
     b_r1_1_1 = ButtonMain(library_top, '1rad_1X_1Y', dim)
-    b_r1_1_1.config(command=lambda : libSend_circle("D602B00 64 00 64 00 64\n"))
+    b_r1_1_1.config(command=lambda : libSend("D602B00 64 00 64 00 64\n"))
     b_r1_2_2 = ButtonMain(library_top, '1rad_2X_2Y', dim)
-    b_r1_1_1.config(command=lambda : libSend_circle("D602B00 64 00 C8 00 C8\n"))
+    b_r1_1_1.config(command=lambda : libSend("D602B00 64 00 C8 00 C8\n"))
     b_r1_3_3 = ButtonMain(library_top, '1rad_3X_3Y', dim)
-    b_r1_3_3.config(command=lambda : libSend_circle("D602B00 64 01 00 01 00\n"))
+    b_r1_3_3.config(command=lambda : libSend("D602B00 64 01 00 01 00\n"))
     # radius = 2
     b_r2_1_1 = ButtonMain(library_top, '1rad_1X_1Y', dim)
-    b_r2_1_1.config(command=lambda : libSend_circle("D602B00 C8 00 64 00 64\n"))
+    b_r2_1_1.config(command=lambda : libSend("D602B00 C8 00 64 00 64\n"))
     b_r2_2_2 = ButtonMain(library_top, '1rad_2X_2Y', dim)
-    b_r2_2_2.config(command=lambda : libSend_circle("D602B00 C8 00 C8 00 C8\n"))
+    b_r2_2_2.config(command=lambda : libSend("D602B00 C8 00 C8 00 C8\n"))
     b_r2_3_3 = ButtonMain(library_top, '1rad_3X_3Y', dim)
-    b_r2_3_3.config(command=lambda : libSend_circle("D602B00 C8 01 00 01 00\n"))
+    b_r2_3_3.config(command=lambda : libSend("D602B00 C8 01 00 01 00\n"))
 
-    b_r1_1_1.place(x=200,y=90)
-    b_r1_2_2.place(x=200,y=180)
-    b_r1_3_3.place(x=200,y=270)
-    b_r2_1_1.place(x=418, y=90)
-    b_r2_2_2.place(x=418, y=180)
-    b_r2_3_3.place(x=418, y=270)
+    b_r1_1_1.place(x=177,y=70)
+    b_r1_2_2.place(x=177,y=160)
+    b_r1_3_3.place(x=177,y=250)
+    b_r2_1_1.place(x=414, y=70)
+    b_r2_2_2.place(x=414, y=160)
+    b_r2_3_3.place(x=414, y=250)
 
     library_top.protocol("WM_DELETE_WINDOW", lambda : root.quit())
 
@@ -268,19 +269,19 @@ def libSquares():
     title.pack(side=TOP)
 
     button_X = ButtonMain(library_top, '1len_1X_1Y', dim)
-    button_X.config(command=lambda : libSend_square("D603B00 64 00 64 00 64\n"))
+    button_X.config(command=lambda : libSend("D603B00 64 00 64 00 64\n"))
     button_Y = ButtonMain(library_top, '2len_2X_2Y', dim)
-    button_Y.config(command=lambda : libSend_square("D603B00 64 00 C8 00 C8\n"))
+    button_Y.config(command=lambda : libSend("D603B00 64 00 C8 00 C8\n"))
     button_Diag = ButtonMain(library_top, '3len_3X_3Y', dim)
-    button_Diag.config(command=lambda : libSend_square("D603B00 64 01 00 01 00\n"))
+    button_Diag.config(command=lambda : libSend("D603B00 64 01 00 01 00\n"))
     
     back = ButtonMain(library_top, 'Back', dimB) 
     back.config(command = lambda : close_top('library', 'square'))
     back.place(x=0, y=0)
 
-    button_X.place(x=309, y=90)
-    button_Y.place(x=309, y=180)
-    button_Diag.place(x=309, y=270)
+    button_X.place(x=297, y=80)
+    button_Y.place(x=297, y=170)
+    button_Diag.place(x=297, y=260)
 
     library_top.protocol("WM_DELETE_WINDOW", lambda : root.quit())
 
@@ -295,14 +296,15 @@ def secondMenu(aShape, header): # parameters decide which menu
     myLabel = Label(menu2, image=bimg, bg='grey5')
     myLabel.place(x=0,y=0)
     title = TitleMain(menu2, header)
-    title.place(x=363,y=10)
+    #title.place(x=363,y=10)
+    title.pack(side=TOP)
 
     button_Lib = ButtonMain(menu2, 'Library', dim)
     button_Lib.config(command=lambda : close_top2(aShape, True))
-    button_Lib.place(x=309,y=90)
+    button_Lib.place(x=297,y=80)
     button_Input = ButtonMain(menu2, 'Input Values', dim)
     button_Input.config(command=lambda : close_top2(aShape, False))
-    button_Input.place(x=309,y=180)
+    button_Input.place(x=297,y=170)
     back = ButtonMain(menu2, 'Back', dimB) 
     back.config(command = lambda : close_top('menu2', aShape))
     back.place(x=0, y=0)
@@ -317,7 +319,7 @@ def line():
     
     input_top = Toplevel(root)
     input_top.geometry("{}x{}+{}+{}".format(root_W, plot_H, root_left, root_top))
-    
+
 
     myLabel = Label(input_top, image=bimg, bg='black')
     myLabel.place(x=0,y=0)    
@@ -325,8 +327,8 @@ def line():
     title.pack(side=TOP)
    
     send_button = ButtonMain(input_top, 'Send', dimS)
-    send_button.config(command = lambda : clickSend("601"))
-    send_button.place(x=605, y=70)
+    send_button.config(command = lambda : clickSend("600"))
+    send_button.place(x=655, y=70)
     back = ButtonMain(input_top, 'Back', dimB) 
     back.config(command = lambda : (toggle_state('normal', False), input_top.destroy()))
     back.place(x=0, y=0)
@@ -341,14 +343,14 @@ def line():
     l_x1 = LabelBox(input_top, ' x1:')
     l_y1 = LabelBox(input_top, ' y1:')
 
-    l_x0.place(x=20, y=80)
-    coordinates[0].place(x=50, y=80) 
-    l_y0.place(x=160, y=80)
-    coordinates[1].place(x=190, y=80)
-    l_x1.place(x=300, y=80)
-    coordinates[2].place(x=330, y=80)
-    l_y1.place(x=440, y=80)
-    coordinates[3].place(x=470, y=80)
+    l_x0.place(x=15, y=80)
+    coordinates[0].place(x=55, y=80) 
+    l_y0.place(x=170, y=80)
+    coordinates[1].place(x=210, y=80)
+    l_x1.place(x=325, y=80)
+    coordinates[2].place(x=365, y=80)
+    l_y1.place(x=480, y=80)
+    coordinates[3].place(x=520, y=80)
    
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', False), input_top.destroy()))
     
@@ -377,17 +379,17 @@ def circle():
 
     send_button = ButtonMain(input_top, 'Send', dimS)
     send_button.config(command = lambda : clickSend("601"))
-    send_button.place(x=530, y=70)
+    send_button.place(x=550, y=70)
     back = ButtonMain(input_top, 'Back', dimB) 
     back.config(command = lambda : (toggle_state('normal', False), input_top.destroy()))
     back.place(x=0, y=0)
 
     rad_label.place(x=20, y=80)
-    coordinates[0].place(x=90, y=80)
-    x0_label.place(x=210, y=80)   
-    coordinates[1].place(x=245, y=80)
-    y0_label.place(x=360, y=80)
-    coordinates[2].place(x=395, y=80)
+    coordinates[0].place(x=95, y=80)
+    x0_label.place(x=215, y=80)   
+    coordinates[1].place(x=255, y=80)
+    y0_label.place(x=370, y=80)
+    coordinates[2].place(x=415, y=80)
 
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', False), input_top.destroy()))
 
@@ -409,7 +411,7 @@ def square():
 
     send_button = ButtonMain(input_top, 'Send', dimS)
     send_button.config(command = lambda : clickSend("602"))
-    send_button.place(x=530, y=70)
+    send_button.place(x=550, y=70)
     back = ButtonMain(input_top, 'Back', dimB) 
     back.config(command = lambda : (toggle_state('normal', False), input_top.destroy()))
     back.place(x=0, y=0)
@@ -423,11 +425,11 @@ def square():
     y0_label = LabelBox(input_top, ' y0:')
 
     length_label.place(x=20, y=80)
-    coordinates[0].place(x=90, y=80)
-    x0_label.place(x=210, y=80)   
-    coordinates[1].place(x=245, y=80)
-    y0_label.place(x=360, y=80)
-    coordinates[2].place(x=395, y=80)
+    coordinates[0].place(x=95, y=80)
+    x0_label.place(x=215, y=80)   
+    coordinates[1].place(x=255, y=80)
+    y0_label.place(x=375, y=80)
+    coordinates[2].place(x=415, y=80)
 
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', False), input_top.destroy()))
 
@@ -448,7 +450,7 @@ def travel():
 
     send_button = ButtonMain(input_top, 'Send', dimS)
     send_button.config(command = lambda : clickSend("604"))
-    send_button.place(x=605, y=70)
+    send_button.place(x=655, y=70)
     back = ButtonMain(input_top, 'Back', dimB) 
     back.config(command = lambda : (toggle_state('normal', True), input_top.destroy()))
     back.place(x=0, y=0)
@@ -463,14 +465,14 @@ def travel():
     l_x1 = LabelBox(input_top, ' x1:')
     l_y1 = LabelBox(input_top, ' y1:')
 
-    l_x0.place(x=20, y=80)
-    coordinates[0].place(x=50, y=80) 
-    l_y0.place(x=160, y=80)
-    coordinates[1].place(x=190, y=80)
-    l_x1.place(x=300, y=80)
-    coordinates[2].place(x=330, y=80)
-    l_y1.place(x=440, y=80)
-    coordinates[3].place(x=470, y=80)
+    l_x0.place(x=15, y=80)
+    coordinates[0].place(x=55, y=80) 
+    l_y0.place(x=170, y=80)
+    coordinates[1].place(x=210, y=80)
+    l_x1.place(x=325, y=80)
+    coordinates[2].place(x=365, y=80)
+    l_y1.place(x=480, y=80)
+    coordinates[3].place(x=520, y=80)
    
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', True), input_top.destroy()))
 
@@ -498,21 +500,19 @@ def mario():
     send.place(x=330, y=290)
     input_top.protocol("WM_DELETE_WINDOW", lambda : root.quit())
 
-
-
 #########################################################################################
 # Some special button dimensions       ##
 global dim,dimS,dimB                   ##
 # [width,height,padx]                  ##
-dim = [20,2,2,5]      # Regular Button ## 
+dim = [20,2,2,8]      # Regular Button ## 
 dimS = [12,2,0,0]     # Send Button    ##
 dimB = [10,1,0,5]     # Back Button    ##
 #########################################
 
 ############ MAIN MENU ################################################################## 
 mainTitle = TitleMain(root, 'Main Menu')
-mainTitle.place(x=363,y=10)
-#mainTitle.pack(side=TOP)
+mainTitle.pack(side=TOP)
+
 lineb = ButtonMain(root, 'Line', dim)
 lineb.config(command=lambda : close_top('main', 'line'))
 circb = ButtonMain(root, 'Circle',dim)
@@ -524,11 +524,11 @@ mariob.config(command=mario)
 travelb = ButtonMain(root, 'Travel',dim)
 travelb.config(command=lambda : (toggle_state('disable', True), travel()))
 
-lineb.place(x=309,y=90)
-circb.place(x=309,y=180)
-sqb.place(x=309,y=270)
-mariob.place(x=309,y=360)
-travelb.place(x=309,y=450)
+lineb.place(x=297,y=80)
+circb.place(x=297,y=170)
+sqb.place(x=297,y=260)
+mariob.place(x=297,y=350)
+travelb.place(x=297,y=440)
 
 #########################################################################################
 
