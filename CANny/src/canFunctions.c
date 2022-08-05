@@ -1,4 +1,5 @@
 #include "gd32vf103.h"
+#include <canFunctions.h>
 #include "delay.h"
 #include <math.h>
 
@@ -18,9 +19,6 @@
 #define PWMC1_PORT     GPIOA
 #define PWMC1_PIN      GPIO_PIN_1
 #define PWM_CHANNEL    
-
-
-
 
 
 typedef struct{
