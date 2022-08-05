@@ -8,14 +8,10 @@
 
 int main(void)
 {
-    //uint32_t debounce_counter = 0;
-    //uint8_t buttons = 0;
     int P_coordinates[8];
 
-    short int pointerX=0;             //PEKARE         startläget på plottern ugår från vad dessa värden är satta till.
-    short int pointerY=0;             // PEKARE 
-
-    //int32_t duty = 1000; // PWM DUTY
+    short int pointerX=0;             // startläget på plottern ugår från vad dessa värden är satta till.
+    short int pointerY=0;             
 
     can_receive_message_struct can_message;
     can_struct_para_init(CAN_RX_MESSAGE_STRUCT, &can_message);
@@ -43,15 +39,11 @@ int main(void)
     gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_3);
     gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
     gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0);
-    //gpio_init(GPIOB, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_2);
-
-    //buttons = (gpio_input_port_get(GPIOB) >> 12) & 0x0F;
 
     init_PWM_example(); 
 
     while(1){
 
-        //pwm_up();  // Grund vinkel PWM
         /* Start ADC conversion */
         adc_software_trigger_enable(ADC0, ADC_INSERTED_CHANNEL);
 
