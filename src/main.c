@@ -20,6 +20,7 @@ int main(void)
     can_receive_message_struct can_message;
     can_struct_para_init(CAN_RX_MESSAGE_STRUCT, &can_message);
 
+    can_rx_buffer_t receive_buffer;
     can_buffer_init(&receive_buffer);
     can_networking_init();
     
@@ -46,7 +47,7 @@ int main(void)
 
     //buttons = (gpio_input_port_get(GPIOB) >> 12) & 0x0F;
 
-    init_PWM_example();   // Initiera PWM
+    init_PWM_example(); 
 
     while(1){
 
