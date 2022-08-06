@@ -2,8 +2,6 @@
 #include "canFunctions.h"
 #include "shapeFunctions.h"
 
-#include <math.h>
-
 #define CAN_RECEIVE_BUFFER_SIZE 32
 #define CAN_NO_MESSAGE 0xFFF
 
