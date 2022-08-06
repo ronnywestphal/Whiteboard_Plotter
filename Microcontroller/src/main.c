@@ -2,7 +2,6 @@
 #include "canFunctions.h"
 #include "shapeFunctions.h"
 #include "delay.h"
-#include <math.h>
 
 #define CAN_NO_MESSAGE 0xFFF
 
@@ -10,7 +9,7 @@ int main(void)
 {
     int P_coordinates[8];
 
-    short int pointerX=0;             // startläget på plottern ugår från vad dessa värden är satta till.
+    short int pointerX=0;             
     short int pointerY=0;             
 
     can_receive_message_struct can_message;
