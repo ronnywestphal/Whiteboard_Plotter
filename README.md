@@ -9,15 +9,15 @@ The objective was to use a GD32VF103 RISC-V MCU and it's CAN2.0B interface to cr
 </p>
 
 ## Hardware
-- Two GD32VF103 RISC-V MCU  
+- Two GD32VF103 with RISC-V   
 - Raspberry PI 4
 - Nema 17 RS PRO Hybrid Stepper Motors
 - TOWER PRO SERVO MOTOR SG90
 
-## GD32VF103 RISC-V MCU Main Project
+## GD32VF103 RISC-V | Main Project
 The project is written in C using the PlatformIO development platform in Visual Studio Code. The MCU receives coordinates on it's CAN interface and stores them in a FIFO buffer where it can store a number of messages. Each CAN message contains all the necessary information for the plotter to draw one shape. 
 
-## GD32VF103 RISC-V MCU USB to CAN converter and Transceiver
+## GD32VF103 RISC-V | USB to CAN Converter and Transceiver
 This is necessary to receive the serial data from the Raspberry PI then transmit it as a CAN message to the transceiver so the plotter can receive the message on it's CAN interface. 
 
 ## Raspberry PI 4
