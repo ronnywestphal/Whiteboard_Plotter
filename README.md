@@ -2,10 +2,10 @@
 A plotter that is mounted on a whiteboard using magnets. It is capable of drawing shapes in different sizes.
 
 This is a school project at the end of the first year in the Electrical Engineering program at KTH Royal Institute of Technology. 
-The objective was to use a GD32VF103 RISC-V MCU and it's CAN2.0B interface to create a device that could complete a task. 
+The course objective was to use a GD32VF103 RISC-V MCU and it's CAN2.0B interface to create a device that could complete a task. 
 
 <p align="center">
- <img src="https://user-images.githubusercontent.com/84048902/184477814-aded21fe-4947-4625-af45-166133167624.png" />
+ <img src="https://user-images.githubusercontent.com/84048902/184477814-aded21fe-4947-4625-af45-166133167624.png" width="450" height="350" />
 </p>
 
 ## Hardware
