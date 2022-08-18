@@ -146,53 +146,7 @@ void CAN1_RX1_IRQHandler(can_rx_buffer_t *pReceive_buffer){
 
 }
 
-/* Initialize two ADCs for joystick */
-void init_ADC(){
-
-    /* Initialize ADC pins */
-    rcu_periph_clock_enable(RCU_GPIOA);
-    gpio_init(GPIOA, GPIO_MODE_AIN, GPIO_OSPEED_50MHZ, GPIO_PIN_3 | GPIO_PIN_4);
-
-    /* enable ADC clock */
-    rcu_periph_clock_enable(RCU_ADC0);
-
-    /* Select the clock frequency that will be used for the ADC core. */
-    rcu_adc_clock_config(RCU_CKADC_CKAPB2_DIV4);    //DIV4 => 108/4 = 27MHz
-
-    adc_deinit(ADC0);
-
-    adc_mode_config(ADC_MODE_FREE);
-
-    adc_special_function_config(ADC0, ADC_SCAN_MODE, ENABLE);
-    
-    /* Sets where padding is applied to the measurement. Data alignment right puts padding bits above MSB */
-    adc_data_alignment_config(ADC0, ADC_DATAALIGN_RIGHT);
-
-    /* Selects how many channels to convert each time. This can be used to "queue" multiple channels. Here just two channels are selected. */
-    adc_channel_length_config(ADC0, ADC_INSERTED_CHANNEL, 2);
-
-    /* Choose ADC0 channel 3 on the first "slot" and channel 4 to the second */
-    adc_inserted_channel_config(ADC0, 0, ADC_CHANNEL_3, ADC_SAMPLETIME_55POINT5);
-    adc_inserted_channel_config(ADC0, 1, ADC_CHANNEL_4, ADC_SAMPLETIME_55POINT5);
-
-    /* Use software trigger, can't use continious conversion on the inserted channel */
-    adc_external_trigger_source_config(ADC0, ADC_INSERTED_CHANNEL, ADC0_1_EXTTRIG_INSERTED_NONE);
-    adc_external_trigger_config(ADC0, ADC_INSERTED_CHANNEL, ENABLE);
-    
-    /* Enable ADC.*/
-    adc_enable(ADC0);
-
-    /* Let ADC stabilize */
-    delay_1ms(1);
-
-    /* Calibrates the ADC against an internal source. */
-    adc_calibration_enable(ADC0);
-
-    adc_software_trigger_enable(ADC0, ADC_INSERTED_CHANNEL);
-    
-}
-
-void init_PWM_example(){
+void init_PWM(){
 
     /* These structs are used for configuring the timer */
     timer_oc_parameter_struct timer_ocinitpara;
