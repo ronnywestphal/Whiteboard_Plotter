@@ -39,12 +39,9 @@ int main(void)
     gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
     gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0);
 
-    init_PWM_example(); 
+    init_PWM(); 
 
     while(1){
-
-        /* Start ADC conversion */
-        adc_software_trigger_enable(ADC0, ADC_INSERTED_CHANNEL);
 
         /* Check receive buffer */
         can_message = can_buffer_pop(&receive_buffer);
