@@ -1,7 +1,7 @@
 #include "gd32vf103.h"
 #include "can_pwm.h"
 #include "shapes_execute.h"
-  
+#include "delay.h"
 
 
 /* This is a fix for an earlier version of the API which did not include this interrupt. In later version CAN_INT_FLAG_RFL1 should be used */
