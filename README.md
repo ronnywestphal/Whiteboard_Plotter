@@ -28,11 +28,9 @@ The GUI is written in Python's GUI package Tkinter. The user can select a shape 
   <img src="https://user-images.githubusercontent.com/84048902/184476230-2786d1f2-d88a-4804-bfd7-e4dad85331c7.png" width="600" />
 </p>
 
-User input = [1122, 3344, 5566, 7788] gets converted to b'D600B11 22 33 44 55 66 77 88\n' and sent via serial port 'ttyACM0'.
-
-'D' indicates the start of the ID (600 = Line) and 'B' indicates the start of the coordinates (start and end of line).
-
-The plotter reads the ID and proceeds to draw the line using the coordinates and Bresenham's Line Algorithm.
+- User input = [1122, 3344, 5566, 7788] gets converted to b'D600B11 22 33 44 55 66 77 88\n' and sent via serial port 'ttyACM0'.
+- 'D' indicates the start of the ID (600 = Line) and 'B' indicates the start of the coordinates (start and end of line).
+- The plotter reads the ID and proceeds to draw the line using the coordinates and Bresenham's Line Algorithm.
 
 
 
