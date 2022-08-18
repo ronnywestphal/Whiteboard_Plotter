@@ -1,6 +1,6 @@
 #include "gd32vf103.h"
-#include "canFunctions.h"
-#include "shapeFunctions.h"
+#include "can_pwm.h"
+#include "shapes_execute.h"
 #include "delay.h"
 
 #define CAN_NO_MESSAGE 0xFFF
@@ -42,6 +42,9 @@ int main(void)
     init_PWM(); 
 
     while(1){
+        
+        /* Start ADC conversion */
+        adc_software_trigger_enable(ADC0, ADC_INSERTED_CHANNEL);
 
         /* Check receive buffer */
         can_message = can_buffer_pop(&receive_buffer);

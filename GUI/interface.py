@@ -13,7 +13,9 @@ from PIL import Image,ImageTk
 #reiconify() återskapar rutan på fel plats - specificerat center-koordinater efter varje reiconify()
 
 
-##### Settings for reusable widgets ########################
+#==========================================================================#
+#============ Settings for reusable widgets ===============================#
+
 class ButtonMain(Button):
     def __init__(self,parent=None, txt='', dim=[]):
         Button.__init__(self, parent)
@@ -62,9 +64,11 @@ class InputBox(Entry):
         self['highlightbackground'] = 'cyan3'
         self['highlightthickness'] = 1
         self['width'] = 10
-############################################################
 
-##### WINDOW ###############################################
+
+#==========================================================================#
+#============ WINDOW ======================================================#
+
 root = Tk()
 root.title("Whiteboard Plotter")
 root.option_add('*Font', '21')
@@ -79,9 +83,9 @@ root.geometry("{}x{}+{}+{}".format(root_W, root_H, root_left, root_top))
 # Plot-Window height #
 plot_H = 170
 
-############################################################
 
-##### BACKGROUND IMAGES ####################################
+#==========================================================================#
+#============ BACKGROUND IMAGES ===========================================#
 im = Image.open("linjer1.jpeg")
 im2 = im.resize((800,600))
 bimg = ImageTk.PhotoImage(im2)
@@ -93,15 +97,17 @@ img1 = Image.open("Super-Mario.jpg")
 reimg = img1.resize((800,600))
 mariPic = ImageTk.PhotoImage(reimg)
 
-############################################################
 
-#### SERIAL SEND SETTINGS ##################################
+#==========================================================================#
+#============ SERIAL SEND SETTINGS ========================================#
+
 serial_port = '/dev/ttyACM0'
-#serial_send = Serial(serial_port, timeout=0, writeTimeout=0)
+serial_send = Serial(serial_port, timeout=0, writeTimeout=0)
 
-############################################################
 
-###### SERIAL SEND #########################################
+#==========================================================================#
+#============ SERIAL SEND =================================================#
+
 def clickSend(m_id):
     global coordinates 
     tempstring = coordinates[0].get() 
@@ -121,11 +127,11 @@ def clickSend(m_id):
         except:
             break
     print(str.encode(send_string))
-    #serial_send.write(str.encode(send_string + '\n'))
+    serial_send.write(str.encode(send_string + '\n'))
     
-############################################################
+#==========================================================================#
+#============ CLOSE WINDOW ================================================#
 
-###### CLOSE WINDOW ########################################
 def close_top(top, shape):
     global root,input_top,library_top,menu2
     if (top=='main'):
@@ -146,12 +152,15 @@ def close_top(top, shape):
             secondMenu(shape, 'Circle Menu')
         elif (shape=='square'):
             secondMenu(shape, 'Square Menu')
-        else:                   # travel or mario = bring back root
+        else:                                   # travel or mario = bring back root
             root.deiconify()
             root.geometry("{}x{}+{}+{}".format(root_W, root_H, root_left, root_top))       
-        
-# CLOSE SECOND MENU WINDOW # 
-def close_top2(shape, lib):        # (which shape, library/user input)
+
+
+#==========================================================================#        
+#============ CLOSE SECOND MENU WINDOW ====================================# 
+
+def close_top2(shape, lib):                     # (which shape, library/user input)
     global menu2
     if (lib):
         menu2.destroy()
@@ -184,16 +193,19 @@ def toggle_state(state, root_win):
                 child['state']=str(state)
             except:
                 pass    
-#############################################################
 
-##### SEND STRING FROM LIBRARY ##############################
+
+#==========================================================================#
+#============ SEND STRING FROM LIBRARY ====================================#
+
 def libSend(send):
     print(str.encode(send))
-    #serial_send.write(str.encode(send))
+    serial_send.write(str.encode(send))
 
-#############################################################
 
-##### LIBRARY MENUES ########################################
+#==========================================================================#
+#============ LIBRARY MENUES ==============================================#
+
 def libLines():
     global library_top
     library_top = Toplevel(root)
@@ -285,9 +297,10 @@ def libSquares():
 
     library_top.protocol("WM_DELETE_WINDOW", lambda : root.quit())
 
-######################################################################################
 
-##### SECOND MENUES ##################################################################
+#==========================================================================#
+#============ SECOND MENUES ===============================================#
+
 def secondMenu(aShape, header): # parameters decide which menu
     global menu2
     menu2 = Toplevel(root)
@@ -310,10 +323,11 @@ def secondMenu(aShape, header): # parameters decide which menu
     back.place(x=0, y=0)
   
     menu2.protocol("WM_DELETE_WINDOW", lambda : root.quit())
-    
-######################################################################################
 
-############## LINE ##################################################################  
+
+#==========================================================================#
+#============ LINE ========================================================# 
+ 
 def line(): 
     global coordinates, input_top
     
@@ -354,9 +368,10 @@ def line():
    
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', False), input_top.destroy()))
     
-#######################################################################################
 
-############# CIRCLE ##################################################################
+#==========================================================================#
+#============ CIRCLE ======================================================#
+
 def circle():
     global coordinates, input_top
     
@@ -394,9 +409,9 @@ def circle():
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', False), input_top.destroy()))
 
 
-########################################################################################
+#==========================================================================#
+#============ SQUARE ======================================================#
 
-############## SQUARE ##################################################################
 def square():
     global coordinates, input_top
     
@@ -434,9 +449,9 @@ def square():
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', False), input_top.destroy()))
 
 
-#########################################################################################
-
-############## TRAVEL ###################################################################  
+#==========================================================================#
+#============ TRAVEL ======================================================#
+  
 def travel(): 
     global coordinates, input_top
     
@@ -477,9 +492,9 @@ def travel():
     input_top.protocol("WM_DELETE_WINDOW", lambda : (toggle_state('normal', True), input_top.destroy()))
 
 
-#########################################################################################
+#==========================================================================#
+#============ DRAW MARIO ==================================================#
 
-############## DRAW MARIO ###############################################################
 def mario():
     global input_top
     root.withdraw()
@@ -500,7 +515,7 @@ def mario():
     send.place(x=330, y=290)
     input_top.protocol("WM_DELETE_WINDOW", lambda : root.quit())
 
-#########################################################################################
+#==========================================================================#
 # Some special button dimensions       ##
 global dim,dimS,dimB                   ##
 # [width,height,padx]                  ##
@@ -509,7 +524,8 @@ dimS = [12,2,0,0]     # Send Button    ##
 dimB = [10,1,0,5]     # Back Button    ##
 #########################################
 
-############ MAIN MENU ################################################################## 
+#==========================================================================#
+#============ MAIN MENU ===================================================# 
 mainTitle = TitleMain(root, 'Main Menu')
 mainTitle.pack(side=TOP)
 
@@ -530,7 +546,7 @@ sqb.place(x=297,y=260)
 mariob.place(x=297,y=350)
 travelb.place(x=297,y=440)
 
-#########################################################################################
+#==========================================================================#
 
 root.mainloop()
 

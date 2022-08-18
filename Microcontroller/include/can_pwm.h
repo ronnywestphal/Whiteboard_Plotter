@@ -1,6 +1,13 @@
 #include "gd32vf103.h"
 
+
 #define CAN_RECEIVE_BUFFER_SIZE 32
+#define CAN_NO_MESSAGE 0xFFF
+ 
+#define PWMC1_PORT     GPIOA
+#define PWMC1_PIN      GPIO_PIN_1
+#define PWM_CHANNEL  
+
 
 typedef struct{
     short int xcor;
@@ -21,3 +28,6 @@ void can_buffer_init(can_rx_buffer_t *buf);
 void can_networking_init(void);
 
 void CAN_send_message(uint16_t message_id, uint8_t remote_data, uint8_t length, uint8_t *p_data);
+
+void init_PWM();
+void init_ADC();

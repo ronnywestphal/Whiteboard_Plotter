@@ -1,15 +1,7 @@
 #include "gd32vf103.h"
-#include "canFunctions.h"
-#include "shapeFunctions.h"
-
-#define CAN_RECEIVE_BUFFER_SIZE 32
-#define CAN_NO_MESSAGE 0xFFF
-
-
-// PWM 
-#define PWMC1_PORT     GPIOA
-#define PWMC1_PIN      GPIO_PIN_1
-#define PWM_CHANNEL    
+#include "can_pwm.h"
+#include "shapes_execute.h"
+  
 
 
 /* This is a fix for an earlier version of the API which did not include this interrupt. In later version CAN_INT_FLAG_RFL1 should be used */
@@ -142,4 +134,96 @@ void CAN1_RX1_IRQHandler(can_rx_buffer_t *pReceive_buffer){
 
     /* Put message in message buffer and handle in main loop */
     can_buffer_push(receive_message, &pReceive_buffer);
+}
+
+void init_PWM(){
+
+    /* These structs are used for configuring the timer */
+    timer_oc_parameter_struct timer_ocinitpara;
+    timer_parameter_struct timer_initpara;
+
+    /* First we need to enable the clock for the timer */
+    rcu_periph_clock_enable(RCU_TIMER4);
+
+    /* Reset the timer to a known state */
+    timer_deinit(TIMER4);
+
+    /* This function sets the struct up with default values */
+    timer_struct_para_init(&timer_initpara);
+
+    /* timer configuration */
+    timer_initpara.prescaler         = 107;                     // Prescaler 1 gives counter clock of 108MHz/2 = 54MHz 
+    timer_initpara.alignedmode       = TIMER_COUNTER_EDGE;      // count alignment edge = 0,1,2,3,0,1,2,3... center align = 0,1,2,3,2,1,0
+    timer_initpara.counterdirection  = TIMER_COUNTER_UP;        // Counter direction
+    timer_initpara.period            = 20000;                   // Sets how far to count. 54MHz/4096 = 13,2KHz (max is 65535)
+    timer_initpara.clockdivision     = TIMER_CKDIV_DIV1;        // This is used by deadtime, and digital filtering (not used here though)
+    timer_initpara.repetitioncounter = 0;                       // Runs continiously
+    timer_init(TIMER4, &timer_initpara);                        // Apply settings to timer
+
+
+    /* This function initializes the channel setting struct */
+    timer_channel_output_struct_para_init(&timer_ocinitpara);
+    /* PWM configuration */
+    timer_ocinitpara.outputstate  = TIMER_CCX_ENABLE;                               // Channel enable
+    timer_ocinitpara.outputnstate = TIMER_CCXN_DISABLE;                             // Disable complementary channel
+    timer_ocinitpara.ocpolarity   = TIMER_OC_POLARITY_HIGH;                         // Active state is high
+    timer_ocinitpara.ocnpolarity  = TIMER_OCN_POLARITY_HIGH;    
+    timer_ocinitpara.ocidlestate  = TIMER_OC_IDLE_STATE_LOW;                        // Idle state is low
+    timer_ocinitpara.ocnidlestate = TIMER_OCN_IDLE_STATE_LOW;
+    timer_channel_output_config(TIMER4,TIMER_CH_1,&timer_ocinitpara);               // Apply settings to channel
+
+    timer_channel_output_pulse_value_config(TIMER4,TIMER_CH_1,0);                   // Set pulse width
+    timer_channel_output_mode_config(TIMER4,TIMER_CH_1,TIMER_OC_MODE_PWM0);         // Set pwm-mode
+    timer_channel_output_shadow_config(TIMER4,TIMER_CH_1,TIMER_OC_SHADOW_DISABLE);
+
+    /* auto-reload preload enable */
+    timer_auto_reload_shadow_enable(TIMER4);
+
+    /* start the timer */
+    timer_enable(TIMER4);
+}
+
+void init_ADC(){
+
+    /* Initialize ADC pins */
+    rcu_periph_clock_enable(RCU_GPIOA);
+    gpio_init(GPIOA, GPIO_MODE_AIN, GPIO_OSPEED_50MHZ, GPIO_PIN_3 | GPIO_PIN_4);
+
+    /* enable ADC clock */
+    rcu_periph_clock_enable(RCU_ADC0);
+
+    /* Select the clock frequency that will be used for the ADC core. */
+    rcu_adc_clock_config(RCU_CKADC_CKAPB2_DIV4);    //DIV4 => 108/4 = 27MHz
+
+    adc_deinit(ADC0);
+
+    adc_mode_config(ADC_MODE_FREE);
+
+    adc_special_function_config(ADC0, ADC_SCAN_MODE, ENABLE);
+    
+    /* Sets where padding is applied to the measurement. Data alignment right puts padding bits above MSB */
+    adc_data_alignment_config(ADC0, ADC_DATAALIGN_RIGHT);
+
+    /* Selects how many channels to convert each time. This can be used to "queue" multiple channels. Here just two channels are selected. */
+    adc_channel_length_config(ADC0, ADC_INSERTED_CHANNEL, 2);
+
+    /* Choose ADC0 channel 3 on the first "slot" and channel 4 to the second */
+    adc_inserted_channel_config(ADC0, 0, ADC_CHANNEL_3, ADC_SAMPLETIME_55POINT5);
+    adc_inserted_channel_config(ADC0, 1, ADC_CHANNEL_4, ADC_SAMPLETIME_55POINT5);
+
+    /* Use software trigger, can't use continious conversion on the inserted channel */
+    adc_external_trigger_source_config(ADC0, ADC_INSERTED_CHANNEL, ADC0_1_EXTTRIG_INSERTED_NONE);
+    adc_external_trigger_config(ADC0, ADC_INSERTED_CHANNEL, ENABLE);
+    
+    /* Enable ADC.*/
+    adc_enable(ADC0);
+
+    /* Let ADC stabilize */
+    delay_1ms(1);
+
+    /* Calibrates the ADC against an internal source. */
+    adc_calibration_enable(ADC0);
+
+    adc_software_trigger_enable(ADC0, ADC_INSERTED_CHANNEL);
+    
 }

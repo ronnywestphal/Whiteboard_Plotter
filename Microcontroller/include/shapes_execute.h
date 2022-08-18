@@ -1,5 +1,9 @@
 #include "gd32vf103.h"
 
+#define CAN_DRAW_LINE       0x603
+#define CAN_DRAW_CIRCLE     0x605
+#define CAN_DRAW_MARIO      0x606
+#define CAN_DRAW_SQUARE     0x607
 
 typedef struct{
     short int xcor;
