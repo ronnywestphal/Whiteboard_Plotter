@@ -350,7 +350,7 @@ void travel(int x0, int y0, int x1, int y1){
     }   
 }
 
-void init_PWM_example(){
+void init_PWM(){
 
     /* These structs are used for configuring the timer */
     timer_oc_parameter_struct timer_ocinitpara;
@@ -396,11 +396,11 @@ void init_PWM_example(){
     /* start the timer */
     timer_enable(TIMER4);
 }
+
+/* Penn up/down */
 void pwm_up(void){
-
-  timer_channel_output_pulse_value_config(TIMER4,TIMER_CH_1,(int)1500);
-  delay_1ms(20);
-
+    timer_channel_output_pulse_value_config(TIMER4,TIMER_CH_1,(int)1500);
+    delay_1ms(20);
 }
 void pwm_down(){
     int j=1750;
