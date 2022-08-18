@@ -1,7 +1,6 @@
 #include "gd32vf103.h"
 #include "can_pwm.h"
 #include "shapes_execute.h"
-#include "delay.h"
 
 #define CAN_NO_MESSAGE 0xFFF
 
