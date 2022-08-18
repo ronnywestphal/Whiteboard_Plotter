@@ -18,7 +18,7 @@ The course objective was to use a GD32VF103 RISC-V MCU and it's CAN2.0B interfac
 The project is written in C using the PlatformIO development platform in Visual Studio Code. The MCU receives coordinates on it's CAN interface and stores them in a FIFO buffer. Each CAN message contains all the necessary information for the plotter to draw one shape. 
 
 ## GD32VF103 RISC-V | USB to CAN Converter and Transceiver
-The MCU lacks a transceiver so this part is necessary to receive the serial data from the Raspberry PI. The converter receives the serial data then transmits it as a CAN message to the transceiver so the plotter can receive the message on it's CAN interface. 
+The MCU lacks a transceiver so this part is necessary to receive the serial data from the Raspberry PI. The converter receives the serial data then transmits it as a CAN message to the transceiver so the MCU on the plotter can receive the message on it's CAN interface. 
 
 ## Raspberry PI 4
 The GUI is written in Python's GUI package Tkinter. The user can select a shape and what size by manually entering the ID of the shape along with the coordinates or by using the library. The ID and coordinates are stored in a byte string along with identifiers. 
